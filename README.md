@@ -20,9 +20,9 @@ Menu-bar macOS app for quick AI answers — Spotlight-style panel, global hotkey
 
 ## Install (release build)
 
-1. Download `QuickAsk-1.0.zip` from [Releases](https://github.com/rrer-ask/QuickAsk/releases/latest)
-2. Drag `QuickAsk.app` to Applications
-3. Right-click → **Open** (ad-hoc signature / Gatekeeper)
+1. Download `QuickAsk-1.0.dmg` from [Releases](https://github.com/rrer-ask/QuickAsk/releases/latest)
+2. Open the DMG → drag **QuickAsk** to **Applications**
+3. First launch: right-click the app → **Open** (ad-hoc signature / Gatekeeper)
 4. Settings → paste API key → Use as active
 5. Press **⌥Space**
 
@@ -35,7 +35,7 @@ xcodebuild -scheme QuickAsk -configuration Release -derivedDataPath build
 open build/Build/Products/Release/QuickAsk.app
 ```
 
-Or: `./scripts/make-zip.sh`
+Or: `./scripts/make-dmg.sh`
 
 ## License
 

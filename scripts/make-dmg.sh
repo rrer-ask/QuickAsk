@@ -5,8 +5,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 BUILD="$ROOT/build"
 APP_SRC="$BUILD/Build/Products/Release/QuickAsk.app"
 DIST="$ROOT/dist"
+STAGE="$ROOT/dist/dmg-stage"
 VERSION="${QUICKASK_VERSION:-1.0}"
-ZIP_NAME="QuickAsk-${VERSION}.zip"
+DMG_NAME="QuickAsk-${VERSION}.dmg"
+VOL_NAME="QuickAsk"
 
 cd "$ROOT"
 command -v xcodegen >/dev/null && xcodegen generate
@@ -24,11 +26,21 @@ ditto "$APP_SRC" "$DIST/QuickAsk.app"
 xattr -cr "$DIST/QuickAsk.app"
 codesign --force --deep --sign - "$DIST/QuickAsk.app"
 
-# ditto zip preserves .app bundle correctly for Finder
-rm -f "$ROOT/$ZIP_NAME"
-ditto -c -k --sequesterRsrc --keepParent "$DIST/QuickAsk.app" "$ROOT/$ZIP_NAME"
+rm -rf "$STAGE"
+mkdir -p "$STAGE"
+ditto "$DIST/QuickAsk.app" "$STAGE/QuickAsk.app"
+ln -s /Applications "$STAGE/Applications"
 
-# optional: also install locally
+rm -f "$ROOT/$DMG_NAME"
+hdiutil create \
+  -volname "$VOL_NAME" \
+  -srcfolder "$STAGE" \
+  -ov \
+  -format UDZO \
+  "$ROOT/$DMG_NAME"
+
+rm -rf "$STAGE"
+
 if [[ "${INSTALL_LOCAL:-1}" == "1" ]]; then
   echo "Installing to /Applications…"
   rm -rf /Applications/QuickAsk.app
@@ -36,5 +48,5 @@ if [[ "${INSTALL_LOCAL:-1}" == "1" ]]; then
 fi
 
 echo ""
-echo "Ready: $ROOT/$ZIP_NAME"
-ls -lh "$ROOT/$ZIP_NAME"
+echo "Ready: $ROOT/$DMG_NAME"
+ls -lh "$ROOT/$DMG_NAME"
